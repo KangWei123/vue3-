@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES5中Object.defineproperty</title>
+</head>
+
+<body>
+    ES5中Object.defineproperty
+</body>
+<script>
+
+    let obj = {
+        a: 1,
+        b:2
+    }
+    let newValue = 45
+    for (const key in  obj){
+        Object.defineProperty(obj, key, {
+        get(value) {
+            console.log('获取')
+            return value
+        },
+        set(newValue) {
+            console.log('设置')
+            value = newValue
+        }
+    })
+    }
+   
+    // obj.b = 6 //设置
+    // obj.a = 3 //设置
+    
+    // obj.a//获取
+    // obj.b //获取
+    //无效
+    obj.c = 9 //设置
+    obj.c 
+</script>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02-ES6中proxy</title>
+</head>
+
+<body>
+    02-ES6中proxy
+</body>
+<script>
+    const data = {
+        name:'zs',
+        age:18
+    }
+    const proxyData = new Proxy(data,{
+        get(target,key,receiver){
+            console.log('get',target, key, receiver)
+            // return target[key]
+
+        },
+        set(target,key,value,receiver){
+            console.log('set',target, key, value, receiver)
+            // target[key] = value
+        },
+        deleteProperty(target,key){
+            // 必须返回一个 Boolean 类型的值，表示了该属性是否被成功删除
+            console.log('del')
+            return delete target[key]
+        }
+    })
+    // proxyData.sex = 'male' , delete proxyData.name  对象属性的添加和删除都能被劫持到
+      // 数组的下标和长度操作都能被劫持到
+    proxyData.msg = 'vue'
+    proxyData.msg 
+    delete proxyData.c
+</script>
+
+</html>
