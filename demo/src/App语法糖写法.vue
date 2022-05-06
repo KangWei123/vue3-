@@ -1,4 +1,4 @@
-// 普通写法
+//语法糖写法
 <template>
   <section class="todoapp">
     <header class="header">
@@ -44,14 +44,21 @@
           @dblclick="dbclickItem(item.id, item.labelValue)"
           v-for="item in list"
           :key="item.id"
-          :class="{completed:item.inputChecked,editing:currentEditingId===item.id}"
+          :class="{
+            completed: item.inputChecked,
+            editing: currentEditingId === item.id,
+          }"
         >
           <div class="view">
             <input class="toggle" type="checkbox" v-model="item.inputChecked" />
             <label>{{ item.labelValue }}</label>
             <button class="destroy" @click="delItem(index)"></button>
           </div>
-          <input class="edit" v-model="item.labelValue" @keyup.enter="confirmEdit" />
+          <input
+            class="edit"
+            v-model="item.labelValue"
+            @keyup.enter="confirmEdit"
+          />
         </li>
       </ul>
     </section>
@@ -79,91 +86,107 @@
       </button>
     </footer>
   </section>
+  {{ msg }}
+  <Son ref="childRef" :title="title" @childFn="childFn"></Son>
 </template>
-<script>
-// 标准组件<script> 需要写setup函数并繁琐retrun
-import { reactive, toRefs, computed, watch } from "vue";
-export default {
-  setup() {
-    const state = reactive({
-      list: [
-        {
-          inputChecked: true,
-          labelValue: "unicorn",
-          id: "0",
-        },
-        {
-          inputChecked: false,
-          labelValue: "JavaScript",
-          id: "1",
-        },
-      ],
-      currentEditingId: '',
-      currentEditingName: '',
-      inputvalue: "",
-    });
-    // 回车 确认
-    const keyupEnter = () => {
-      state.list.unshift({
-        inputChecked: false,
-        labelValue: state.inputvalue,
-        id: state.list.length,
-      });
-      // 清空inputvalue
-      state.inputvalue = "";
-    };
-    // 全选 全不选按钮
-    const selectAll = () => {
-      let isTrue = state.list.every((item) => item.inputChecked);
-      if (isTrue) {
-        // 全部为选中  设置为不选中
-        state.list.forEach((item) => (item.inputChecked = false));
-      } else {
-        // 设置为选中
-        state.list.forEach((item) => (item.inputChecked = true));
-      }
-    };
-    // 删除单个
-    const delItem = (id) => {
-      state.list.splice(id, 1);
-    };
-    // 删除选中的
-    const delSelect = () => {
-      state.list = state.list.filter((item) => !item.inputChecked);
-    };
-    // 双击编辑
-    const dbclickItem = (id, name) => {
-      state.currentEditingId = id;
-      state.currentEditingName = name;
-    };
-    // 修改完毕-回车
-    const confirmEdit = (id, name) => {
-      state.currentEditingId = '';
-      state.currentEditingName = '';
-    };
-    const total = computed(
-      () => state.list.filter((item) => !item.inputChecked).length
-    );
-    const checkboxAll = computed({
-      get() {
-        return state.list.every((item) => item.inputChecked);
-      },
-      set(value) {
-        selectAll();
-      },
-    });
-    return {
-      ...toRefs(state),
-      total,
-      selectAll,
-      keyupEnter,
-      delItem,
-      delSelect,
-      checkboxAll,
-      dbclickItem,
-      confirmEdit,
-    };
+<script setup>
+// script setup>语法糖  无需return 无需注册组件
+// script setup>语法糖里面的代码会被编译成组件 setup() 函数的内容，不需要通过return暴露
+// 声明的变量、函数以及import引入的内容，即可在<template/>使用，并且不需要写export default{}
+import {
+  reactive,
+  toRefs,
+  computed,
+  watch,
+  ref,
+  nextTick,
+  onMounted,
+} from "vue";
+import Son from "./components/son.vue";
+//注册响应数据
+const childRef = ref();
+onMounted(() => {
+  //子组件接收暴露出来得值
+  console.log("childRef", childRef.value.name);
+  console.log(childRef.value.toEmits);
+});
+
+const msg = ref("我和我的祖国");
+const title = ref("一刻也不能分割");
+const state = reactive({
+  list: [
+    {
+      inputChecked: true,
+      labelValue: "unicorn",
+      id: "0",
+    },
+    {
+      inputChecked: false,
+      labelValue: "JavaScript",
+      id: "1",
+    },
+  ],
+  currentEditingId: "",
+  currentEditingName: "",
+  inputvalue: "",
+});
+// 回车 确认
+const keyupEnter = () => {
+  state.list.unshift({
+    inputChecked: false,
+    labelValue: state.inputvalue,
+    id: state.list.length,
+  });
+  // 清空inputvalue
+  state.inputvalue = "";
+};
+// 子组件触发方法
+const childFn = (val) => {
+  // alert(val)
+  title.value = val;
+};
+// 全选 全不选按钮
+const selectAll = () => {
+  let isTrue = state.list.every((item) => item.inputChecked);
+  if (isTrue) {
+    // 全部为选中  设置为不选中
+    state.list.forEach((item) => (item.inputChecked = false));
+  } else {
+    // 设置为选中
+    state.list.forEach((item) => (item.inputChecked = true));
+  }
+};
+// 删除单个
+const delItem = (id) => {
+  state.list.splice(id, 1);
+};
+// 删除选中的
+const delSelect = () => {
+  state.list = state.list.filter((item) => !item.inputChecked);
+};
+// 双击编辑
+const dbclickItem = (id, name) => {
+  state.currentEditingId = id;
+  state.currentEditingName = name;
+};
+// 修改完毕-回车
+const confirmEdit = (id, name) => {
+  state.currentEditingId = "";
+  state.currentEditingName = "";
+};
+const total = computed(
+  () => state.list.filter((item) => !item.inputChecked).length
+);
+const checkboxAll = computed({
+  get() {
+    return state.list.every((item) => item.inputChecked);
   },
+  set(value) {
+    selectAll();
+  },
+});
+const { list, currentEditingId, currentEditingName, inputvalue } = {
+  ...toRefs(state),
 };
 </script>
 <style>
