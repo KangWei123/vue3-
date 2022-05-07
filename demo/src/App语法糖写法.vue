@@ -2,11 +2,12 @@
 <template>
   <section class="todoapp">
     <header class="header">
-      <h1>todos22</h1>
+      <h1 style="--my-color:red;">todos22</h1>
       <input
         class="new-todo"
-        placeholder="What needs to be done?"
+        placeholder="What needs to be done22?"
         autofocus
+        type="password"
         @keyup.enter="keyupEnter"
         v-model="inputvalue"
       />
@@ -201,7 +202,12 @@ const { list, currentEditingId, currentEditingName, inputvalue } = {
 <style scoped>
 
 @import url("../public/index.css");
-
+h1{
+  --mybgcolor:yellow;
+  color:var(--my-color) !important;
+  background-color: var(--mybgcolor);
+  border:1px red solid
+}
 .msg{
   /* color: red */
   color: v-bind(color)
