@@ -2,7 +2,7 @@
 <template>
   <section class="todoapp">
     <header class="header">
-      <h1>todos2</h1>
+      <h1>todos22</h1>
       <input
         class="new-todo"
         placeholder="What needs to be done?"
@@ -86,13 +86,14 @@
       </button>
     </footer>
   </section>
-  {{ msg }}
+  <div class="msg">{{ msg }}</div>
   <Son ref="childRef" :title="title" @childFn="childFn"></Son>
 </template>
 <script setup>
 // script setup>语法糖  无需return 无需注册组件
 // script setup>语法糖里面的代码会被编译成组件 setup() 函数的内容，不需要通过return暴露
 // 声明的变量、函数以及import引入的内容，即可在<template/>使用，并且不需要写export default{}
+
 import {
   reactive,
   toRefs,
@@ -100,16 +101,22 @@ import {
   watch,
   ref,
   nextTick,
-  onMounted,
+  onMounted
 } from "vue";
 import Son from "./components/son.vue";
 //注册响应数据
 const childRef = ref();
 onMounted(() => {
   //子组件接收暴露出来得值
-  console.log("childRef", childRef.value.name);
-  console.log(childRef.value.toEmits);
+    console.log("childRef", childRef.value.name);
+    console.log(childRef.value.toEmits);
 });
+
+const color = ref("red");
+
+setInterval(()=>{
+  color.value = `rgb(${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)})`
+},2000)
 
 const msg = ref("我和我的祖国");
 const title = ref("一刻也不能分割");
@@ -188,9 +195,18 @@ const checkboxAll = computed({
 const { list, currentEditingId, currentEditingName, inputvalue } = {
   ...toRefs(state),
 };
+
+
 </script>
-<style>
+<style scoped>
+
 @import url("../public/index.css");
+
+.msg{
+  /* color: red */
+  color: v-bind(color)
+  /* color: rgb(79,145,211) */
+}
 hr {
   margin: 20px 0;
   border: 0;

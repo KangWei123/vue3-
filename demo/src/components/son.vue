@@ -6,12 +6,17 @@
 <script setup>
 // 组件通信:在<script setup>中必须使用 defineProps 和 defineEmits API 来替代 props 和 emits
 // 自定义事件使用 defineEmits    属性值传递使用 defineProps
-import { ref } from "vue";
+import { ref ,onMounted} from "vue";
 console.log('子组件setup')
 const props = defineProps({
   title: {
     type: String,
   },
+});
+onMounted(() => {
+  //子组件接收暴露出来得值
+  console.log("子组件onMounted");
+
 });
 const name = ref("我是子组件");
 const emits = defineEmits(["childFn"]);
